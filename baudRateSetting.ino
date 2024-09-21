@@ -3,7 +3,7 @@ bool baudRateSetting() {
   Serial.println("[SETTINGS/Baud Rate]");
   for (uint8_t i = 0; i < sizeof(baudRates) / sizeof(baudRates[0]); i++)
     Serial.print(i + 1), Serial.print(": "), Serial.println(baudRates[i]);
-  printBack();
+  Serial.println("S: Back");
 waitCmd_baudRateSetting:
   Serial.print("Selection: ");
   while (!Serial.available());
@@ -16,7 +16,7 @@ waitCmd_baudRateSetting:
     goto waitCmd_baudRateSetting;
   }
   uint32_t baudRate = getBaudRate(choice - '0' - 1);
-  Serial.println("Baud rate changed to " + String(baudRate));
+  Serial.println("Baud rate set to " + String(baudRate));
   return true;
 }
 uint32_t getBaudRate(uint8_t index) {
@@ -27,6 +27,6 @@ uint32_t getBaudRate(uint8_t index) {
     baudRate = 9600;
     index = 0;
   }
-  EEPROM.update(baudRate_addr, index);
+  EEPROM.update(baudRateAddr, index);
   return baudRate;
 }

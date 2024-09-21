@@ -3,11 +3,10 @@ void gainSetting() {
   Serial.println("[SETTINGS/Gain]");
   for (uint8_t i = 0; i < sizeof(gains) / sizeof(gains[0]); i++)
     Serial.print(i + 1), Serial.print(": "), Serial.println(gains[i]);
-  printBack();
+  Serial.println("S: Back");
 waitCmd_gainSetting:
   Serial.print("Selection: ");
   while (!Serial.available());
-  //  char choice = toupper(Serial.readStringUntil('\r\n').charAt(0));
   char choice = toupper(Serial.readStringUntil('\n').charAt(0));
   Serial.println(choice);
   if (choice == 'S')
@@ -32,5 +31,5 @@ void setGain(uint8_t index) {
     tcs.setGain(TCS34725_GAIN_4X);
     index = 1;
   }
-  EEPROM.update(gain_addr, index);
+  EEPROM.update(gainAddr, index);
 }

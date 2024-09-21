@@ -3,11 +3,10 @@ void integrationTimeSetting() {
   Serial.println("[SETTINGS/Integration TIme]");
   for (uint8_t i = 0; i < sizeof(integTimes) / sizeof(integTimes[0]); i++)
     Serial.print(i + 1), Serial.print(": "), Serial.println(integTimes[i]);
-  printBack();
+  Serial.println("S: Back");
 waitCmd_integrationTimeSetting:
   Serial.print("Selection: ");
   while (!Serial.available());
-  //  String choiceStr = Serial.readStringUntil('\r\n');
   String choiceStr = Serial.readStringUntil('\n');
   choiceStr.trim();
   Serial.println(choiceStr);
@@ -40,5 +39,5 @@ void setIntegTime(uint8_t index) {
     tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_50MS);
     index = 2;
   }
-  EEPROM.update(integTime_addr, index);
+  EEPROM.update(integTimeAddr, index);
 }

@@ -12,7 +12,6 @@ bool factoryReset() {
     }
   } while (!Serial.available() && cd >= 0);
   if (Serial.available())
-    //    choice = toupper(Serial.readStringUntil('\r\n').charAt(0));
     choice = toupper(Serial.readStringUntil('\n').charAt(0));
   else
     choice = 'N';

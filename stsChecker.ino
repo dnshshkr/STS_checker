@@ -4,27 +4,17 @@
 #define runPin 6
 #define ylwPin 5
 #define chPin 7
-#define relayType_addr 0
-#define baudRate_addr 1
-#define integTime_addr 2
-#define gain_addr 3
-#define ylw_LR_addr_ch1 4
-#define ylw_HR_addr_ch1 5
-#define ylw_LG_addr_ch1 6
-#define ylw_HG_addr_ch1 7
-#define ylw_LB_addr_ch1 8
-#define ylw_HB_addr_ch1 9
-#define ylw_LR_addr_ch2 10
-#define ylw_HR_addr_ch2 11
-#define ylw_LG_addr_ch2 12
-#define ylw_HG_addr_ch2 13
-#define ylw_LB_addr_ch2 14
-#define ylw_HB_addr_ch2 15
+#define chSize 6
+#define relayTypeAddr 0
+#define baudRateAddr 1
+#define integTimeAddr 2
+#define gainAddr 3
 Adafruit_TCS34725 tcs = Adafruit_TCS34725();
+const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9};
+const uint8_t ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
 bool relayType;
-uint8_t red, green, blue, ylw_LR_ch1, ylw_HR_ch1, ylw_LG_ch1, ylw_HG_ch1, ylw_LB_ch1, ylw_HB_ch1;
-uint8_t ylw_LR_ch2, ylw_HR_ch2, ylw_LG_ch2, ylw_HG_ch2, ylw_LB_ch2, ylw_HB_ch2;
-float fred, fgreen, fblue;
+uint8_t r, g, b, ylwCh1[chSize], ylwCh2[chSize];
+float fr, fg, fb;
 void (*resMcu)() = 0;
 void reboot() {
   Serial.println("Rebooting...");
@@ -36,14 +26,14 @@ void setup() {
   pinMode(ylwPin, OUTPUT);
   pinMode(chPin, INPUT_PULLUP);
   getVals();
-  relayType = EEPROM.read(relayType_addr);
-  Serial.begin(getBaudRate(EEPROM.read(baudRate_addr)));
+  relayType = EEPROM.read(relayTypeAddr);
+  Serial.begin(getBaudRate(EEPROM.read(baudRateAddr)));
   printInfo();
-  setIntegTime(EEPROM.read(integTime_addr));
-  setGain(EEPROM.read(gain_addr));
-  float integTime = getIntegTime(EEPROM.read(integTime_addr));
-  uint8_t gain = getGain(EEPROM.read(gain_addr));
-  Serial.print("Integration Time: "), Serial.print(integTime), Serial.print(" ms, Gain: "), Serial.print(gain), Serial.println("x");
+  setIntegTime(EEPROM.read(integTimeAddr));
+  setGain(EEPROM.read(gainAddr));
+  //  float integTime = getIntegTime(EEPROM.read(integTimeAddr));
+  //  uint8_t gain = getGain(EEPROM.read(gainAddr));
+  //  Serial.print("Integration Time: "), Serial.print(integTime), Serial.print(" ms, Gain: "), Serial.print(gain), Serial.println("x");
   initSensor();
 }
 void loop() {
@@ -55,26 +45,27 @@ void loop() {
     }
   }
   if (!checkConnection()) {
-    Serial.println("Sensor disconnected. Reconnecting...");
+    Serial.println("Reconnecting sensor...");
     relayType ? digitalWrite(runPin, LOW) : digitalWrite(runPin, HIGH);
     initSensor();
   }
   relayType ? digitalWrite(runPin, HIGH) : digitalWrite(runPin, LOW);
-  tcs.getRGB(&fred, &fgreen, &fblue);
-  red = round(fred), green = round(fgreen), blue = round(fblue);
-  bool channel = digitalRead(chPin);
+  tcs.getRGB(&fr, &fg, &fb);
+  r = round(fr), g = round(fg), b = round(fb);
+  bool ch = digitalRead(chPin);
   Serial.print("Channel ");
-  channel ? Serial.println(1) : Serial.println(2);
-  Serial.print("R: "), Serial.print(red), Serial.print("\tG: "), Serial.print(green), Serial.print("\tB: "), Serial.print(blue), Serial.println(), Serial.print("Result: ");
-  if ((channel == HIGH && red >= ylw_LR_ch1 && red <= ylw_HR_ch1 && green >= ylw_LG_ch1 && green <= ylw_HG_ch1 && blue >= ylw_LB_ch1 && blue <= ylw_HB_ch1) ||
-      (channel == LOW && red >= ylw_LR_ch2 && red <= ylw_HR_ch2 && green >= ylw_LG_ch2 && green <= ylw_HG_ch2 && blue >= ylw_LB_ch2 && blue <= ylw_HB_ch2)) {
-    Serial.println("Yellow\n");
+  ch ? Serial.println(1) : Serial.println(2);
+  Serial.print("R: "), Serial.print(r), Serial.print("\tG: "), Serial.print(g), Serial.print("\tB: "), Serial.print(b), Serial.println();
+  if ((ch == HIGH && r >= ylwCh1[0] && r <= ylwCh1[1] && g >= ylwCh1[2] && g <= ylwCh1[3] && b >= ylwCh1[4] && b <= ylwCh1[5]) ||
+      (ch == LOW && r >= ylwCh2[0] && r <= ylwCh2[1] && g >= ylwCh2[2] && g <= ylwCh2[3] && b >= ylwCh2[4] && b <= ylwCh2[5])) {
+    Serial.println("Yellow");
     relayType ? digitalWrite(ylwPin, HIGH) : digitalWrite(ylwPin, LOW);
   }
   else {
-    Serial.println("No reading\n");
+    Serial.println("None");
     relayType ? digitalWrite(ylwPin, LOW) : digitalWrite(ylwPin, HIGH);
   }
+  Serial.println();
 }
 bool checkConnection() {
   Wire.beginTransmission(TCS34725_ADDRESS);
@@ -98,10 +89,4 @@ void printInfo() {
 void flushSerial() {
   while (Serial.available())
     Serial.read();
-}
-void printBack() {
-  Serial.println("S: Back");
-}
-void printAutoCalibrate() {
-  Serial.println("1. Auto calibrate (this operation overwrites all RGB values)");
 }

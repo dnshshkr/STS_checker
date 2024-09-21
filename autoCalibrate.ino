@@ -1,55 +1,32 @@
-void autoCalibrate(char ch) {
+void autoCalibrate(uint8_t* valAddrs) {
   uint8_t readCount = 10;
   uint16_t totalR, totalG, totalB;
-  int32_t lr, hr, lg, hg, lb, hb;
-  float tolerance = 0.1;
-  Serial.println("Auto calibrating...");
+  int32_t vals[chSize];
+  float tol = 0.1;
+  Serial.println("Calibrating...");
   for (uint8_t i = 0; i < readCount; i++) {
-    tcs.getRGB(&fred, &fgreen, &fblue);
-    red = round(fred), green = round(fgreen), blue = round(fblue);
-    totalR += red;
-    totalG += green;
-    totalB += blue;
+    tcs.getRGB(&fr, &fg, &fb);
+    r = round(fr), g = round(fg), b = round(fb);
+    totalR += r, totalG += g, totalB += b;
   }
-  red = round((float)totalR / readCount);
-  lr = round((float)red * (1.0 - tolerance));
-  if (lr < 0)
-    lr = 0;
-  hr = round((float)red * (1.0 + tolerance));
-  if (hr > 255)
-    hr = 255;
-  green = round((float)totalG / readCount);
-  lg = round((float)green * (1.0 - tolerance));
-  if (lg < 0)
-    lg = 0;
-  hg = round((float)green * (1.0 + tolerance));
-  if (hg > 255)
-    hg = 255;
-  blue = round((float)totalB / readCount);
-  lb = round((float)blue * (1.0 - tolerance));
-  if (lb < 0)
-    lb = 0;
-  hb = round((float)blue * (1.0 + tolerance));
-  if (hb > 255)
-    hb = 255;
-  switch (ch) {
-    case '1': {
-        EEPROM.update(ylw_LR_addr_ch1, lr);
-        EEPROM.update(ylw_HR_addr_ch1, hr);
-        EEPROM.update(ylw_LG_addr_ch1, lg);
-        EEPROM.update(ylw_HG_addr_ch1, hg);
-        EEPROM.update(ylw_LB_addr_ch1, lb);
-        EEPROM.update(ylw_HB_addr_ch1, hb);
-        break;
-      }
-    case '2': {
-        EEPROM.update(ylw_LR_addr_ch2, lr);
-        EEPROM.update(ylw_HR_addr_ch2, hr);
-        EEPROM.update(ylw_LG_addr_ch2, lg);
-        EEPROM.update(ylw_HG_addr_ch2, hg);
-        EEPROM.update(ylw_LB_addr_ch2, lb);
-        EEPROM.update(ylw_HB_addr_ch2, hb);
-      }
+  r = round((float)totalR / readCount);
+  vals[0] = round((float)r * (1.0 - tol));
+  vals[1] = round((float)r * (1.0 + tol));
+  g = round((float)totalG / readCount);
+  vals[2] = round((float)g * (1.0 - tol));
+  vals[3] = round((float)g * (1.0 + tol));
+  b = round((float)totalB / readCount);
+  vals[4] = round((float)b * (1.0 - tol));
+  vals[5] = round((float)b * (1.0 + tol));
+  for (uint8_t i = 0; i < chSize; i += 2) {
+    if (vals[i] < 0)
+      vals[i] = 0;
   }
-  Serial.println("Auto calibration completed");
+  for (uint8_t i = 1; i < chSize; i += 2) {
+    if (vals[i] > 255)
+      vals[i] = 255;
+  }
+  for (uint8_t i = 0; i < chSize; i++)
+    EEPROM.update(valAddrs[i], vals[i]);
+  Serial.println("Done");
 }
