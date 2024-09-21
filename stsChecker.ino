@@ -22,10 +22,9 @@
 #define ylw_HB_addr_ch2 15
 Adafruit_TCS34725 tcs = Adafruit_TCS34725();
 bool relayType;
-uint8_t red, green, blue;
-float fred, fgreen, fblue;
-uint8_t ylw_LR_ch1, ylw_HR_ch1, ylw_LG_ch1, ylw_HG_ch1, ylw_LB_ch1, ylw_HB_ch1;
+uint8_t red, green, blue, ylw_LR_ch1, ylw_HR_ch1, ylw_LG_ch1, ylw_HG_ch1, ylw_LB_ch1, ylw_HB_ch1;
 uint8_t ylw_LR_ch2, ylw_HR_ch2, ylw_LG_ch2, ylw_HG_ch2, ylw_LB_ch2, ylw_HB_ch2;
+float fred, fgreen, fblue;
 void (*resMcu)() = 0;
 void reboot() {
   Serial.println("Rebooting...");
