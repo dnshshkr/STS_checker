@@ -6,7 +6,9 @@ void initSensor() {
   while (!sensorInit) {
     relayType ? digitalWrite(ylwPin, LOW) : digitalWrite(ylwPin, HIGH);
     if (Serial.available()) {
-      if (toupper(Serial.readStringUntil('\n').charAt(0)) == 'S') {
+      char cmd = Serial.read();
+      flushSerial();
+      if (toupper(cmd) == 'S') {
         turnOffOutputs();
         settings();
       }

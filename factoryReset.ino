@@ -1,5 +1,5 @@
 bool factoryReset() {
-  Serial.print("[SETTINGS/Factory Reset]\nProceed? (Y): ");
+  Serial.print("[Settings/Factory Reset]\nProceed? (Y): ");
   int8_t cd = 11;
   char choice;
   unsigned long prevmillis;
@@ -11,8 +11,11 @@ bool factoryReset() {
       prevmillis = millis();
     }
   } while (!Serial.available() && cd >= 0);
-  if (Serial.available())
-    choice = toupper(Serial.readStringUntil('\n').charAt(0));
+  if (Serial.available()) {
+    //    choice = toupper(Serial.readStringUntil('\n').charAt(0));
+    choice = Serial.read();
+    flushSerial();
+  }
   else
     choice = 'N';
   Serial.println();

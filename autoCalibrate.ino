@@ -1,7 +1,7 @@
 void autoCalibrate(uint8_t* valAddrs) {
-  uint8_t readCount = 10;
+  uint8_t readCount = 100;
   uint16_t totalR, totalG, totalB;
-  int32_t vals[chSize];
+  int16_t vals[chSize];
   float tol = 0.1;
   Serial.println("Calibrating...");
   for (uint8_t i = 0; i < readCount; i++) {

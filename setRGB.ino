@@ -1,9 +1,11 @@
-void setRGB(char cmd) {
-  const String validCmd[] = {"S", "C", "LR", "HR", "LG", "HG", "LB", "HB"};
+void setRGB(char ch) {
+  static const String validCmd[] = {"S", "C", "LR", "HR", "LG", "HG", "LB", "HB"};
+  static const uint8_t validCmdLen = sizeof(validCmd) / sizeof(validCmd[0]);
   uint8_t vals[chSize], valAddrs[chSize];
 begin_setRGB:
+  //  flushSerial();
   getVals();
-  if (cmd == '1') {
+  if (ch == '1') {
     for (uint8_t i = 0; i < chSize; i++) {
       valAddrs[i] = ylwAddrsCh1[i];
       vals[i] = ylwCh1[i];
@@ -15,7 +17,7 @@ begin_setRGB:
       vals[i] = ylwCh2[i];
     }
   }
-  Serial.print("[SETTINGS/Yellow Channel "), Serial.print(cmd), Serial.println("]");
+  Serial.print("[Settings/Channel "), Serial.print(ch), Serial.println("]");
   Serial.print("LR: "), Serial.println(vals[0]);
   Serial.print("HR: "), Serial.println(vals[1]);
   Serial.print("LG: "), Serial.println(vals[2]);
@@ -30,16 +32,16 @@ waitCmd_setRGB:
   color.trim();
   color.toUpperCase();
   bool isValid = false;
-  for (uint8_t i = 0; i < sizeof(validCmd) / sizeof(validCmd[0]); i++) {
-    if (color == "\0")
-      goto waitCmd_setRGB;
+  for (uint8_t i = 0; i < validCmdLen; i++) {
+    //    if (color == "\0")
+    //      goto waitCmd_setRGB;
     if (color == validCmd[i]) {
       isValid = true;
       break;
     }
   }
   if (!isValid) {
-    Serial.println("Invalid command");
+    Serial.println("Invalid");
     goto waitCmd_setRGB;
   }
   if (color == validCmd[0])
@@ -53,13 +55,14 @@ waitCmd_setRGB:
   int val;
   bool outOfRange;
   do {
-    Serial.print("Insert new value for " + color + " ("), Serial.print(minVal), Serial.print("-"), Serial.print(maxVal), Serial.print("): ");
+    Serial.print("Insert value for " + color + " ("), Serial.print(minVal), Serial.print("-"), Serial.print(maxVal), Serial.print("): ");
     while (!Serial.available());
     val = Serial.readStringUntil('\n').toInt();
+    flushSerial();
     Serial.println(val);
     if (val < minVal || val > maxVal) {
       outOfRange = true;
-      Serial.println("Value out of range");
+      Serial.println("Out of range");
     }
     else
       outOfRange = false;

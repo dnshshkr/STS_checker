@@ -1,12 +1,12 @@
 void settings() {
   char cmd;
-  flushSerial();
 begin_settings:
+  //  flushSerial();
   printInfo();
-  Serial.println("[SETTINGS]");
-  Serial.println("1: Yellow Channel 1");
-  Serial.println("2: Yellow Channel 2");
-  Serial.print("3: Relay Type: Active "), relayType ? Serial.println("High") : Serial.println("Low");
+  Serial.println("[Settings]");
+  Serial.println("1: Channel 1");
+  Serial.println("2: Channel 2");
+  Serial.print("3: Relay Type: Active "), relayType ? Serial.println("high") : Serial.println("low");
   Serial.print("4: Baud Rate: "), Serial.println(getBaudRate(EEPROM.read(baudRateAddr)));
   Serial.print("5: Integration Time: "), Serial.print(getIntegTime(EEPROM.read(integTimeAddr))), Serial.println(" ms");
   Serial.print("6: Gain: "), Serial.print(getGain(EEPROM.read(gainAddr))), Serial.println("x");
@@ -15,7 +15,9 @@ begin_settings:
   Serial.println("S: Exit");
 waitCmd_settings:
   while (!Serial.available());
-  cmd = toupper(Serial.readStringUntil('\n').charAt(0));
+  //  cmd = toupper(Serial.readStringUntil('\n').charAt(0));
+  cmd = Serial.read();
+  flushSerial();
   switch (cmd) {
     case '1': case '2': {
         setRGB(cmd);
@@ -51,7 +53,7 @@ waitCmd_settings:
     case 'S':
       return;
     default: {
-        Serial.println("Invalid command");
+        Serial.println("Invalid");
         goto waitCmd_settings;
       }
   }

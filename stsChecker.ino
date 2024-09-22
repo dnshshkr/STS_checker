@@ -1,8 +1,8 @@
 #define VERSION "3.0"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
-#define runPin 6
 #define ylwPin 5
+#define runPin 6
 #define chPin 7
 #define chSize 6
 #define relayTypeAddr 0
@@ -10,17 +10,11 @@
 #define integTimeAddr 2
 #define gainAddr 3
 Adafruit_TCS34725 tcs = Adafruit_TCS34725();
-const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9};
-const uint8_t ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
+const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9}, ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
 bool relayType;
 uint8_t r, g, b, ylwCh1[chSize], ylwCh2[chSize];
 float fr, fg, fb;
 void (*resMcu)() = 0;
-void reboot() {
-  Serial.println("Rebooting...");
-  delay(100);
-  resMcu();
-}
 void setup() {
   pinMode(runPin, OUTPUT);
   pinMode(ylwPin, OUTPUT);
@@ -37,9 +31,11 @@ void setup() {
   initSensor();
 }
 void loop() {
-  char cmd;
   if (Serial.available()) {
-    if (toupper((char)Serial.read()) == 'S') {
+    char cmd = Serial.read();
+    flushSerial();
+    if (toupper(cmd) == 'S') {
+      //      flushSerial();
       turnOffOutputs();
       settings();
     }
@@ -71,6 +67,25 @@ bool checkConnection() {
   Wire.beginTransmission(TCS34725_ADDRESS);
   return (Wire.endTransmission() == 0);
 }
+void flushSerial() {
+  while (Serial.available() > 0)
+    Serial.read();
+}
+void getVals() {
+  for (uint8_t i = 0; i < chSize; i++) {
+    ylwCh1[i] = EEPROM.read(ylwAddrsCh1[i]);
+    ylwCh2[i] = EEPROM.read(ylwAddrsCh2[i]);
+  }
+}
+void printInfo() {
+  Serial.print("STS Checker Ver. "), Serial.println(VERSION);
+  Serial.println("Copyright(C) Delloyd R&D (M) Sdn Bhd");
+}
+void reboot() {
+  Serial.println("Rebooting...");
+  delay(100);
+  resMcu();
+}
 void turnOffOutputs() {
   digitalWrite(LED_BUILTIN, LOW);
   if (relayType) {
@@ -81,12 +96,4 @@ void turnOffOutputs() {
     digitalWrite(runPin, HIGH);
     digitalWrite(ylwPin, HIGH);
   }
-}
-void printInfo() {
-  Serial.print("STS Checker Ver. "), Serial.println(VERSION);
-  Serial.println("Copyright(C) Delloyd R&D (M) Sdn Bhd");
-}
-void flushSerial() {
-  while (Serial.available())
-    Serial.read();
 }
