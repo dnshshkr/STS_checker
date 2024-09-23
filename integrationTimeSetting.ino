@@ -15,7 +15,7 @@ waitCmd_integrationTimeSetting:
   if (choiceStr == "S")
     return;
   uint8_t choice = choiceStr.toInt();
-  if (choice < 1 || choice > 19) {
+  if (choice < 1 || choice > integTimesLen) {
     Serial.println("Invalid");
     goto waitCmd_integrationTimeSetting;
   }

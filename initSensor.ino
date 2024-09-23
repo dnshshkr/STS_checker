@@ -13,6 +13,7 @@ void initSensor() {
         settings();
       }
     }
+    //    blinks LED_BUILTIN and runPin
     if (prevmillis == 0 || millis() - prevmillis >= 500) {
       bl = !bl;
       Serial.println("Sensor error (Send 'S' to enter settings)");

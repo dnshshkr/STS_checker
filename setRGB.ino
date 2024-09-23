@@ -1,29 +1,29 @@
 void setRGB(char ch) {
   static const String validCmd[] = {"S", "C", "LR", "HR", "LG", "HG", "LB", "HB"};
   static const uint8_t validCmdLen = sizeof(validCmd) / sizeof(validCmd[0]);
-  uint8_t vals[chSize], valAddrs[chSize];
+  uint8_t valsDict[2][chSize];
 begin_setRGB:
   //  flushSerial();
   getVals();
   if (ch == '1') {
     for (uint8_t i = 0; i < chSize; i++) {
-      valAddrs[i] = ylwAddrsCh1[i];
-      vals[i] = ylwCh1[i];
+      valsDict[0][i] = ylwAddrsCh1[i];
+      valsDict[1][i] = ylwCh1[i];
     }
   }
   else {
     for (uint8_t i = 0; i < chSize; i++) {
-      valAddrs[i] = ylwAddrsCh2[i];
-      vals[i] = ylwCh2[i];
+      valsDict[0][i] = ylwAddrsCh2[i];
+      valsDict[1][i] = ylwCh2[i];
     }
   }
   Serial.print("[Settings/Channel "), Serial.print(ch), Serial.println("]");
-  Serial.print("LR: "), Serial.println(vals[0]);
-  Serial.print("HR: "), Serial.println(vals[1]);
-  Serial.print("LG: "), Serial.println(vals[2]);
-  Serial.print("HG: "), Serial.println(vals[3]);
-  Serial.print("LB: "), Serial.println(vals[4]);
-  Serial.print("HB: "), Serial.println(vals[5]);
+  Serial.print("LR: "), Serial.println(valsDict[1][0]);
+  Serial.print("HR: "), Serial.println(valsDict[1][1]);
+  Serial.print("LG: "), Serial.println(valsDict[1][2]);
+  Serial.print("HG: "), Serial.println(valsDict[1][3]);
+  Serial.print("LB: "), Serial.println(valsDict[1][4]);
+  Serial.print("HB: "), Serial.println(valsDict[1][5]);
   Serial.println("C: Self-calibrate");
   Serial.println("S: Back");
 waitCmd_setRGB:
@@ -32,9 +32,6 @@ waitCmd_setRGB:
   color.trim();
   color.toUpperCase();
   bool isValid = false;
-  //  for (short i = 0; i < sizeof(color) / sizeof(color[0]); i++)
-  //    Serial.print(color[i], HEX);
-  //  Serial.println();
   for (uint8_t i = 0; i < validCmdLen; i++) {
     //    if (color == "\0")
     //      goto waitCmd_setRGB;
@@ -50,14 +47,14 @@ waitCmd_setRGB:
   if (color == validCmd[0])
     return;
   else if (color == validCmd[1]) {
-    autoCalibrate(valAddrs);
+    selfCalibrate(valsDict[0]);
     goto begin_setRGB;
   }
   uint8_t minVal, maxVal;
-  getMinMax(vals, color, minVal, maxVal);
+  getMinMax(valsDict[1], color, minVal, maxVal);
   int val;
-  bool outOfRange;
-  do {
+  /*bool outOfRange;
+    do {
     Serial.print("Insert value for " + color + " ("), Serial.print(minVal), Serial.print("-"), Serial.print(maxVal), Serial.print("): ");
     while (!Serial.available());
     val = Serial.readStringUntil('\n').toInt();
@@ -69,19 +66,32 @@ waitCmd_setRGB:
     }
     else
       outOfRange = false;
-  } while (outOfRange);
+    } while (outOfRange);*/
+  while (true) {
+    Serial.print("Insert value for " + color + " ("), Serial.print(minVal), Serial.print("-"), Serial.print(maxVal), Serial.print("): ");
+    while (!Serial.available());
+    val = Serial.readStringUntil('\n').toInt();
+    //    flushSerial();
+    Serial.println(val);
+    if (val < minVal || val > maxVal) {
+      Serial.println("Out of range");
+      continue;
+    }
+    else
+      break;
+  }
   if (color == "LR")
-    EEPROM.update(valAddrs[0], val);
+    EEPROM.update(valsDict[0][0], val);
   else if (color == "HR")
-    EEPROM.update(valAddrs[1], val);
+    EEPROM.update(valsDict[0][1], val);
   else if (color == "LG")
-    EEPROM.update(valAddrs[2], val);
+    EEPROM.update(valsDict[0][2], val);
   else if (color == "HG")
-    EEPROM.update(valAddrs[3], val);
+    EEPROM.update(valsDict[0][3], val);
   else if (color == "LB")
-    EEPROM.update(valAddrs[4], val);
+    EEPROM.update(valsDict[0][4], val);
   else
-    EEPROM.update(valAddrs[5], val);
+    EEPROM.update(valsDict[0][5], val);
   goto begin_setRGB;
 }
 void getMinMax(uint8_t* vals, String color, uint8_t &minVal, uint8_t &maxVal) {

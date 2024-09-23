@@ -1,4 +1,4 @@
-#define VERSION "3.0"
+#define VERSION "3.1"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -31,6 +31,7 @@ void setup() {
   initSensor();
 }
 void loop() {
+  //  checks for user interruption
   if (Serial.available()) {
     char cmd = Serial.read();
     flushSerial();
@@ -40,18 +41,21 @@ void loop() {
       settings();
     }
   }
+  //  checks if connection to sensor exists
   if (!checkConnection()) {
-    //    Serial.println("Reconnecting sensor...");
     relayType ? digitalWrite(runPin, LOW) : digitalWrite(runPin, HIGH);
     initSensor();
   }
   relayType ? digitalWrite(runPin, HIGH) : digitalWrite(runPin, LOW);
+  //  reads RGB data from sensor
   tcs.getRGB(&fr, &fg, &fb);
   r = round(fr), g = round(fg), b = round(fb);
+  //  reads channel (LOW for channel 1, HIGH for channel 2)
   bool ch = digitalRead(chPin);
   Serial.print("Channel ");
   ch ? Serial.println(1) : Serial.println(2);
   Serial.print("R: "), Serial.print(r), Serial.print("\tG: "), Serial.print(g), Serial.print("\tB: "), Serial.print(b), Serial.println();
+  //  matches read RGB data with stored RGB data
   if ((ch == HIGH && r >= ylwCh1[0] && r <= ylwCh1[1] && g >= ylwCh1[2] && g <= ylwCh1[3] && b >= ylwCh1[4] && b <= ylwCh1[5]) ||
       (ch == LOW && r >= ylwCh2[0] && r <= ylwCh2[1] && g >= ylwCh2[2] && g <= ylwCh2[3] && b >= ylwCh2[4] && b <= ylwCh2[5])) {
     Serial.println("Yellow");
@@ -66,7 +70,6 @@ void loop() {
 bool checkConnection() {
   Wire.beginTransmission(TCS34725_ADDRESS);
   bool res = (Wire.endTransmission() == 0);
-  //  return (Wire.endTransmission() == 0);
   if (res)
     return true;
   else {

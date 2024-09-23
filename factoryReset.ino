@@ -7,14 +7,16 @@ bool factoryReset() {
     if (millis() - prevmillis >= 1000)
     {
       cd--;
-      cd >= 0 ? Serial.print(cd), Serial.print(" ") : 0;
+      //      cd >= 0 ? Serial.print(cd), Serial.print(" ") : 0;
+      if (cd >= 0)
+        Serial.print(cd), Serial.print(" ");
       prevmillis = millis();
     }
   } while (!Serial.available() && cd >= 0);
   if (Serial.available()) {
     choice = toupper(Serial.readStringUntil('\n').charAt(0));
     //    choice = toupper(Serial.read());
-//    flushSerial();
+    //    flushSerial();
   }
   else
     choice = 'N';
