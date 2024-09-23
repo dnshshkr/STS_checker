@@ -32,6 +32,9 @@ waitCmd_setRGB:
   color.trim();
   color.toUpperCase();
   bool isValid = false;
+  //  for (short i = 0; i < sizeof(color) / sizeof(color[0]); i++)
+  //    Serial.print(color[i], HEX);
+  //  Serial.println();
   for (uint8_t i = 0; i < validCmdLen; i++) {
     //    if (color == "\0")
     //      goto waitCmd_setRGB;

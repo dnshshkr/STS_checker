@@ -41,7 +41,7 @@ void loop() {
     }
   }
   if (!checkConnection()) {
-    Serial.println("Reconnecting sensor...");
+    //    Serial.println("Reconnecting sensor...");
     relayType ? digitalWrite(runPin, LOW) : digitalWrite(runPin, HIGH);
     initSensor();
   }
@@ -65,7 +65,14 @@ void loop() {
 }
 bool checkConnection() {
   Wire.beginTransmission(TCS34725_ADDRESS);
-  return (Wire.endTransmission() == 0);
+  bool res = (Wire.endTransmission() == 0);
+  //  return (Wire.endTransmission() == 0);
+  if (res)
+    return true;
+  else {
+    Serial.println("Sensor disconnected");
+    return false;
+  }
 }
 void flushSerial() {
   while (Serial.available() > 0)

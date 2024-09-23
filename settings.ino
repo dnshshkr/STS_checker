@@ -15,9 +15,9 @@ begin_settings:
   Serial.println("S: Exit");
 waitCmd_settings:
   while (!Serial.available());
-  //  cmd = toupper(Serial.readStringUntil('\n').charAt(0));
-  cmd = Serial.read();
-  flushSerial();
+  cmd = toupper(Serial.readStringUntil('\n').charAt(0));
+  //  cmd = Serial.read();
+  //  flushSerial();
   switch (cmd) {
     case '1': case '2': {
         setRGB(cmd);
@@ -50,7 +50,7 @@ waitCmd_settings:
         else
           goto begin_settings;
       }
-    case 'S':
+    case 'S': case's':
       return;
     default: {
         Serial.println("Invalid");
