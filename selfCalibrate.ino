@@ -3,7 +3,7 @@ void selfCalibrate(uint8_t* valAddrs) {
   uint16_t totalR = 0, totalG = 0, totalB = 0;
   int16_t vals[chSize];
   Serial.print("Turn on STS before continuing\nEnter offset (0-255): ");
-  while (!Serial.available()) {}
+  while (!Serial.available());
   uint8_t tol = Serial.readStringUntil('\n').toInt();
   Serial.println(tol);
   Serial.println("Calibrating...");
