@@ -29,7 +29,8 @@ begin_setRGB:
 waitCmd_setRGB:
   while (!Serial.available());
   String color = Serial.readStringUntil('\n');
-  color.trim();
+  //  color.trim();
+  //  String color = Serial.readString();
   color.toUpperCase();
   bool isValid = false;
   for (uint8_t i = 0; i < validCmdLen; i++) {

@@ -9,14 +9,14 @@ begin_settings:
   Serial.print("3: Relay Type: Active "), relayType ? Serial.println("high") : Serial.println("low");
   Serial.print("4: Baud Rate: "), Serial.println(getBaudRate(EEPROM.read(baudRateAddr)));
   Serial.print("5: Integration Time: "), Serial.print(getIntegTime(EEPROM.read(integTimeAddr))), Serial.println(" ms");
-  Serial.print("6: Gain: "), Serial.print(getGain(EEPROM.read(gainAddr))), Serial.println("×");
+  Serial.print("6: Gain: "), Serial.print(getGain(EEPROM.read(gainAddr))), Serial.println("x");
   Serial.println("7: Reboot");
   Serial.println("8: Factory Reset");
   Serial.println("S: Exit");
 waitCmd_settings:
   while (!Serial.available());
   char cmd = toupper(Serial.readStringUntil('\n').charAt(0));
-  //  cmd = Serial.read();
+  //  char cmd = Serial.read();
   //  flushSerial();
   switch (cmd) {
     case '1': case '2': {

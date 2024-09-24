@@ -14,8 +14,8 @@ bool factoryReset() {
     }
   } while (!Serial.available() && cd >= 0);
   if (Serial.available()) {
-    choice = toupper(Serial.readStringUntil('\n').charAt(0));
-    //    choice = toupper(Serial.read());
+        choice = toupper(Serial.readStringUntil('\n').charAt(0));
+//    choice = toupper(Serial.read());
     //    flushSerial();
   }
   else
@@ -25,7 +25,7 @@ bool factoryReset() {
     Serial.println("Aborted");
     return false;
   }
-  Serial.print("Resetting "), Serial.print(EEPROM.length()), Serial.println(" bytes...");
+  Serial.print("Clearing "), Serial.print(EEPROM.length()), Serial.println(" bytes...");
   for (uint32_t i = 0; i < EEPROM.length(); i++)
     EEPROM.update(i, 255);
   Serial.println("Done");

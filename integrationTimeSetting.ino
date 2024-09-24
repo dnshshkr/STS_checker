@@ -9,7 +9,8 @@ waitCmd_integrationTimeSetting:
   Serial.print("Selection: ");
   while (!Serial.available());
   String choiceStr = Serial.readStringUntil('\n');
-  choiceStr.trim();
+  //  choiceStr.trim();
+  //  String choiceStr = Serial.readString();
   Serial.println(choiceStr);
   choiceStr.toUpperCase();
   if (choiceStr == "S")
@@ -22,7 +23,6 @@ waitCmd_integrationTimeSetting:
   setIntegTime(choice - 1);
   float integTime = getIntegTime(choice - 1);
   Serial.print("Integration time set to "), Serial.println(integTime);
-  return;
 }
 float getIntegTime(uint8_t index) {
   return integTimes[index];
