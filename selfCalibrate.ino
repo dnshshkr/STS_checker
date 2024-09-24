@@ -4,8 +4,8 @@ void selfCalibrate(uint8_t* valAddrs) {
   int16_t vals[chSize];
   Serial.print("Turn on STS before continuing\nEnter offset (0-255): ");
   while (!Serial.available());
-    uint8_t tol = Serial.readStringUntil('\n').toInt();
-//  uint8_t tol = Serial.readString().toInt();
+  uint8_t tol = Serial.readStringUntil('\n').toInt();
+  //  uint8_t tol = Serial.readString().toInt();
   Serial.println(tol);
   Serial.println("Calibrating...");
   //  collects RGB data up to readCount value
