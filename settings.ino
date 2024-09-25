@@ -14,8 +14,11 @@ begin_settings:
   Serial.println("8: Factory Reset");
   Serial.println("S: Exit");
 waitCmd_settings:
+  Serial.print("Selection: ");
   while (!Serial.available());
-  char cmd = toupper(Serial.readStringUntil('\n').charAt(0));
+  char cmd = Serial.readStringUntil('\n').charAt(0);
+  Serial.println(cmd);
+  cmd = toupper(cmd);
   //  char cmd = Serial.read();
   //  flushSerial();
   switch (cmd) {

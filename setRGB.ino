@@ -27,8 +27,10 @@ begin_setRGB:
   Serial.println("C: Self-calibrate");
   Serial.println("S: Back");
 waitCmd_setRGB:
+  Serial.print("Selection: ");
   while (!Serial.available());
   String color = Serial.readStringUntil('\n');
+  Serial.println(color);
   //  color.trim();
   //  String color = Serial.readString();
   color.toUpperCase();
