@@ -1,18 +1,17 @@
-void selfCalibrate(uint8_t* valAddrs) {
+bool selfCalibrate(uint8_t* valAddrs) {
   static const uint8_t readCount = 128;
   uint16_t totalR = 0, totalG = 0, totalB = 0;
   int16_t vals[chSize];
   Serial.print("Turn on STS before continuing\nEnter offset (0-255): ");
   while (!Serial.available());
   uint8_t tol = Serial.readStringUntil('\n').toInt();
-  //  uint8_t tol = Serial.readString().toInt();
   Serial.println(tol);
   Serial.println("Calibrating...");
   //  collects RGB data up to readCount value
   for (uint8_t i = 0; i < readCount; i++) {
     if (!checkConnection()) {
       Serial.println("Calibration failed");
-      return;
+      return false; //  disables this self-calibrate function on next calls until sensor is reinitialized
     }
     tcs.getRGB(&fr, &fg, &fb);
     r = round(fr), g = round(fg), b = round(fb);
@@ -43,4 +42,5 @@ void selfCalibrate(uint8_t* valAddrs) {
   for (uint8_t i = 0; i < chSize; i++)
     EEPROM.update(valAddrs[i], vals[i]);
   Serial.println("Calibration done");
+  return true;
 }

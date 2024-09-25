@@ -9,8 +9,6 @@ waitCmd_integrationTimeSetting:
   Serial.print("Selection: ");
   while (!Serial.available());
   String choiceStr = Serial.readStringUntil('\n');
-  //  choiceStr.trim();
-  //  String choiceStr = Serial.readString();
   Serial.println(choiceStr);
   choiceStr.toUpperCase();
   if (choiceStr == "S")

@@ -1,4 +1,4 @@
-#define VERSION "3.3"
+#define VERSION "3.4"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -34,12 +34,9 @@ void loop() {
   //  checks for user interruption
   if (Serial.available()) {
     char cmd = toupper(Serial.readStringUntil('\n').charAt(0));
-    //    char cmd = Serial.read();
-    //    flushSerial();
     if (cmd == 'S') {
-      //      flushSerial();
       turnOffOutputs();
-      settings();
+      settings(true);
     }
   }
   //  checks if connection to sensor exists
@@ -78,11 +75,6 @@ bool checkConnection() {
     return false;
   }
 }
-//void flushSerial() {
-//  while (Serial.available() > 0)
-//    Serial.read();
-//  while (Serial.read() == '\0'); //  reads null character
-//}
 void getVals() {
   for (uint8_t i = 0; i < chSize; i++) {
     ylwCh1[i] = EEPROM.read(ylwAddrsCh1[i]);

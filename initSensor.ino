@@ -1,6 +1,6 @@
 void initSensor() {
+  static const uint16_t blinkDuration = 500;
   bool bl = true;
-  uint16_t blinkDuration = 500;
   unsigned long prevmillis;
   Serial.println("Setting up sensor...");
   bool sensorInit = tcs.begin();
@@ -8,11 +8,9 @@ void initSensor() {
     relayType ? digitalWrite(ylwPin, LOW) : digitalWrite(ylwPin, HIGH);
     if (Serial.available()) {
       char cmd = Serial.readStringUntil('\n').charAt(0);
-      //      char cmd = Serial.read();
-      //      flushSerial();
       if (toupper(cmd) == 'S') {
         turnOffOutputs();
-        settings();
+        settings(false);
       }
     }
     //    blinks LED_BUILTIN and runPin
