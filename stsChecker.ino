@@ -65,7 +65,7 @@ void loop() {
   Serial.print("Channel ");
   ch ? Serial.println(1) : Serial.println(2);
   Serial.print("R: "), Serial.print(r), Serial.print("\tG: "), Serial.print(g), Serial.print("\tB: "), Serial.print(b), Serial.println();
-  //  matches read RGB data with stored RGB data
+  //  matches read RGB data with stored RGB data on either channels
   if ((ch == HIGH && r >= ylwDict[0][1][0] && r <= ylwDict[0][1][1] && g >= ylwDict[0][1][2] && g <= ylwDict[0][1][3] && b >= ylwDict[0][1][4] && b <= ylwDict[0][1][5]) ||
       (ch == LOW && r >= ylwDict[1][1][0] && r <= ylwDict[1][1][1] && g >= ylwDict[1][1][2] && g <= ylwDict[1][1][3] && b >= ylwDict[1][1][4] && b <= ylwDict[1][1][5])) {
     Serial.println("Yellow");
