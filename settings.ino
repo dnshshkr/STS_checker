@@ -19,7 +19,7 @@ waitCmd_settings:
   cmd = toupper(cmd);
   switch (cmd) {
     case '1': case '2': {
-        setRGB(cmd, allowSelfCalibrate);
+        setRGB(cmd - '0' - 1, allowSelfCalibrate);
         break;
       }
     case '3': {

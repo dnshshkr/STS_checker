@@ -1,4 +1,4 @@
-#define VERSION "3.4"
+#define VERSION "3.5"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -10,9 +10,21 @@
 #define integTimeAddr 2
 #define gainAddr 3
 Adafruit_TCS34725 tcs = Adafruit_TCS34725();
-const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9}, ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
+//const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9}, ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
 bool relayType;
-uint8_t r, g, b, ylwCh1[chSize], ylwCh2[chSize];
+uint8_t r, g, b;
+uint8_t ylwDict[2][2][chSize] = {
+  //  channel 1
+  {
+    {4, 5, 6, 7, 8, 9}, //  addresses of channel 1
+    {} //  values of channel 1
+  },
+  //  channel 2
+  {
+    {10, 11, 12, 13, 14, 15}, //  addresses of channel 2
+    {} //  values of channel 2
+  }
+};
 float fr, fg, fb;
 void (*resMcu)() = 0;
 void setup() {
@@ -54,8 +66,8 @@ void loop() {
   ch ? Serial.println(1) : Serial.println(2);
   Serial.print("R: "), Serial.print(r), Serial.print("\tG: "), Serial.print(g), Serial.print("\tB: "), Serial.print(b), Serial.println();
   //  matches read RGB data with stored RGB data
-  if ((ch == HIGH && r >= ylwCh1[0] && r <= ylwCh1[1] && g >= ylwCh1[2] && g <= ylwCh1[3] && b >= ylwCh1[4] && b <= ylwCh1[5]) ||
-      (ch == LOW && r >= ylwCh2[0] && r <= ylwCh2[1] && g >= ylwCh2[2] && g <= ylwCh2[3] && b >= ylwCh2[4] && b <= ylwCh2[5])) {
+  if ((ch == HIGH && r >= ylwDict[0][1][0] && r <= ylwDict[0][1][1] && g >= ylwDict[0][1][2] && g <= ylwDict[0][1][3] && b >= ylwDict[0][1][4] && b <= ylwDict[0][1][5]) ||
+      (ch == LOW && r >= ylwDict[1][1][0] && r <= ylwDict[1][1][1] && g >= ylwDict[1][1][2] && g <= ylwDict[1][1][3] && b >= ylwDict[1][1][4] && b <= ylwDict[1][1][5])) {
     Serial.println("Yellow");
     relayType ? digitalWrite(ylwPin, HIGH) : digitalWrite(ylwPin, LOW);
   }
@@ -77,8 +89,8 @@ bool checkConnection() {
 }
 void getVals() {
   for (uint8_t i = 0; i < chSize; i++) {
-    ylwCh1[i] = EEPROM.read(ylwAddrsCh1[i]);
-    ylwCh2[i] = EEPROM.read(ylwAddrsCh2[i]);
+    ylwDict[0][1][i] = EEPROM.read(ylwDict[0][0][i]);
+    ylwDict[1][1][i] = EEPROM.read(ylwDict[1][0][i]);
   }
 }
 void printInfo() {

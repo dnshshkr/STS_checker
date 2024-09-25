@@ -1,20 +1,12 @@
-void setRGB(char ch, bool allowSelfCalibrate) {
+void setRGB(uint8_t ch, bool allowSelfCalibrate) {
   static const String validCmd[] = {"S", "C", "LR", "HR", "LG", "HG", "LB", "HB"};
   static const uint8_t validCmdLen = sizeof(validCmd) / sizeof(validCmd[0]);
   uint8_t valsDict[2][chSize];
 begin_setRGB:
   getVals();
-  if (ch == '1') {
-    for (uint8_t i = 0; i < chSize; i++) {
-      valsDict[0][i] = ylwAddrsCh1[i];
-      valsDict[1][i] = ylwCh1[i];
-    }
-  }
-  else {
-    for (uint8_t i = 0; i < chSize; i++) {
-      valsDict[0][i] = ylwAddrsCh2[i];
-      valsDict[1][i] = ylwCh2[i];
-    }
+  for (uint8_t i = 0; i < 2; i++) {
+    for (uint8_t j = 0; j < chSize; j++)
+      valsDict[i][j] = ylwDict[ch][i][j];
   }
   Serial.print("[Settings/Channel "), Serial.print(ch), Serial.println("]");
   Serial.print("LR: "), Serial.println(valsDict[1][0]);
@@ -30,8 +22,6 @@ waitCmd_setRGB:
   while (!Serial.available());
   String color = Serial.readStringUntil('\n');
   Serial.println(color);
-  //  color.trim();
-  //  String color = Serial.readString();
   color.toUpperCase();
   bool isValid = false;
   for (uint8_t i = 0; i < validCmdLen; i++) {
@@ -78,7 +68,6 @@ waitCmd_setRGB:
     Serial.print("Insert value for " + color + " ("), Serial.print(minVal), Serial.print("-"), Serial.print(maxVal), Serial.print("): ");
     while (!Serial.available());
     val = Serial.readStringUntil('\n').toInt();
-    //    flushSerial();
     Serial.println(val);
     if (val < minVal || val > maxVal) {
       Serial.println("Out of range");

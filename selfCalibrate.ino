@@ -11,7 +11,7 @@ bool selfCalibrate(uint8_t* valAddrs) {
   for (uint8_t i = 0; i < readCount; i++) {
     if (!checkConnection()) {
       Serial.println("Calibration failed");
-      return false; //  disables this self-calibrate function on next calls until sensor is reinitialized
+      return false; //  disables self-calibrate function on next calls until sensor is reinitialized
     }
     tcs.getRGB(&fr, &fg, &fb);
     r = round(fr), g = round(fg), b = round(fb);
