@@ -1,4 +1,4 @@
-#define VERSION "3.6"
+#define VERSION "3.7"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -74,8 +74,9 @@ void loop() {
   ch ? Serial.println(1) : Serial.println(2);
   Serial.print("R: "), Serial.print(r), Serial.print("\tG: "), Serial.print(g), Serial.print("\tB: "), Serial.print(b), Serial.println();
   //  matches read RGB data with stored RGB data on either channels
-  if ((ch == HIGH && r >= ylwDict[0][1][0] && r <= ylwDict[0][1][1] && g >= ylwDict[0][1][2] && g <= ylwDict[0][1][3] && b >= ylwDict[0][1][4] && b <= ylwDict[0][1][5]) ||
-      (ch == LOW && r >= ylwDict[1][1][0] && r <= ylwDict[1][1][1] && g >= ylwDict[1][1][2] && g <= ylwDict[1][1][3] && b >= ylwDict[1][1][4] && b <= ylwDict[1][1][5])) {
+  //  if ((ch == HIGH && r >= ylwDict[0][1][0] && r <= ylwDict[0][1][1] && g >= ylwDict[0][1][2] && g <= ylwDict[0][1][3] && b >= ylwDict[0][1][4] && b <= ylwDict[0][1][5]) ||
+  //      (ch == LOW && r >= ylwDict[1][1][0] && r <= ylwDict[1][1][1] && g >= ylwDict[1][1][2] && g <= ylwDict[1][1][3] && b >= ylwDict[1][1][4] && b <= ylwDict[1][1][5])) {
+  if (r >= ylwDict[!ch][1][0] && r <= ylwDict[!ch][1][1] && g >= ylwDict[!ch][1][2] && g <= ylwDict[!ch][1][3] && b >= ylwDict[!ch][1][4] && b <= ylwDict[!ch][1][5]) {
     Serial.println("Yellow");
     relayType ? digitalWrite(ylwPin, HIGH) : digitalWrite(ylwPin, LOW);
   }
