@@ -4,7 +4,7 @@ begin_settings:
   Serial.println("[Settings]");
   Serial.println("1: Channel 1");
   Serial.println("2: Channel 2");
-  Serial.print("3: Relay Type: Active "), relayType ? Serial.println("high") : Serial.println("low");
+  Serial.print("3: Relay Type: Active "), relayType ? Serial.println("HIGH") : Serial.println("LOW");
   Serial.print("4: Baud Rate: "), Serial.print(getBaudRate(EEPROM.read(baudRateAddr))), Serial.println(" bps");
   Serial.print("5: Integration Time: "), Serial.print(getIntegTime(EEPROM.read(integTimeAddr))), Serial.println(" ms");
   Serial.print("6: Gain: "), Serial.print(getGain(EEPROM.read(gainAddr))), Serial.println("x");
