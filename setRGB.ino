@@ -1,6 +1,7 @@
-void setRGB(uint8_t ch, bool allowSelfCalibrate) {
+void setRGB(uint8_t ch) {
   static const String validCmd[] = {"S", "C", "LR", "HR", "LG", "HG", "LB", "HB"};
   static const uint8_t validCmdLen = sizeof(validCmd) / sizeof(validCmd[0]);
+  bool sensorInitialized = tcs.init();
   uint8_t valsDict[2][chSize];
 begin_setRGB:
   getVals();
@@ -15,7 +16,7 @@ begin_setRGB:
   Serial.print("HG: "), Serial.println(valsDict[1][3]);
   Serial.print("LB: "), Serial.println(valsDict[1][4]);
   Serial.print("HB: "), Serial.println(valsDict[1][5]);
-  Serial.print("C: Self-calibrate"), allowSelfCalibrate ? Serial.println() : Serial.println(" (disallowed)");
+  Serial.print("C: Self-calibrate"), sensorInitialized ? Serial.println() : Serial.println(" (disallowed)");
   Serial.println("S: Back");
 waitCmd_setRGB:
   Serial.print("Selection: ");
@@ -37,9 +38,8 @@ waitCmd_setRGB:
   if (color == validCmd[0]) //  S
     return;
   else if (color == validCmd[1]) { //  C
-    if (allowSelfCalibrate) {
-      if (!selfCalibrate(valsDict[0]))
-        allowSelfCalibrate = false;
+    if (sensorInitialized) {
+      selfCalibrate(valsDict[0]);
       goto begin_setRGB;
     }
     else {

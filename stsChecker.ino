@@ -1,4 +1,4 @@
-#define VERSION "3.5"
+#define VERSION "3.6"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -11,6 +11,7 @@
 #define gainAddr 3
 Adafruit_TCS34725 tcs = Adafruit_TCS34725();
 //const uint8_t ylwAddrsCh1[chSize] = {4, 5, 6, 7, 8, 9}, ylwAddrsCh2[chSize] = {10, 11, 12, 13, 14, 15};
+const uint8_t rPin = A0, gPin = A1, bPin = A2;
 bool relayType;
 uint8_t r, g, b;
 uint8_t ylwDict[2][2][chSize] = {
@@ -28,9 +29,12 @@ uint8_t ylwDict[2][2][chSize] = {
 float fr, fg, fb;
 void (*resMcu)() = 0;
 void setup() {
+  pinMode(chPin, INPUT_PULLUP);
   pinMode(runPin, OUTPUT);
   pinMode(ylwPin, OUTPUT);
-  pinMode(chPin, INPUT_PULLUP);
+  pinMode(rPin, OUTPUT);
+  pinMode(gPin, OUTPUT);
+  pinMode(bPin, OUTPUT);
   getVals();
   relayType = EEPROM.read(relayTypeAddr);
   Serial.begin(getBaudRate(EEPROM.read(baudRateAddr)));
@@ -48,7 +52,7 @@ void loop() {
     char cmd = toupper(Serial.readStringUntil('\n').charAt(0));
     if (cmd == 'S') {
       turnOffOutputs();
-      settings(true);
+      settings();
     }
   }
   //  checks if connection to sensor exists
@@ -60,6 +64,10 @@ void loop() {
   //  reads RGB data from sensor
   tcs.getRGB(&fr, &fg, &fb);
   r = round(fr), g = round(fg), b = round(fb);
+  //  simulates the color on RGB light if exists
+  analogWrite(rPin, r);
+  analogWrite(gPin, g);
+  analogWrite(bPin, b);
   //  reads channel (LOW for channel 1, HIGH for channel 2)
   bool ch = digitalRead(chPin);
   Serial.print("Channel ");
@@ -112,4 +120,7 @@ void turnOffOutputs() {
     digitalWrite(runPin, HIGH);
     digitalWrite(ylwPin, HIGH);
   }
+  analogWrite(rPin, 0);
+  analogWrite(gPin, 0);
+  analogWrite(bPin, 0);
 }

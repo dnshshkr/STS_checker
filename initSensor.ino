@@ -10,7 +10,7 @@ void initSensor() {
       char cmd = Serial.readStringUntil('\n').charAt(0);
       if (toupper(cmd) == 'S') {
         turnOffOutputs();
-        settings(false);
+        settings();
       }
     }
     //    blinks LED_BUILTIN and runPin

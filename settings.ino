@@ -1,4 +1,4 @@
-void settings(bool allowSelfCalibrate) {
+void settings() {
 begin_settings:
   printInfo();
   Serial.println("[Settings]");
@@ -19,7 +19,7 @@ waitCmd_settings:
   cmd = toupper(cmd);
   switch (cmd) {
     case '1': case '2': {
-        setRGB(cmd - '0' - 1, allowSelfCalibrate);
+        setRGB(cmd - '0' - 1);
         break;
       }
     case '3': {
