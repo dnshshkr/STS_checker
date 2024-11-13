@@ -1,4 +1,4 @@
-#define VERSION "3.8"
+#define VERSION "3.9"
 #include <EEPROM.h>
 #include "Adafruit_TCS34725.h"
 #define ylwPin 5
@@ -92,7 +92,7 @@ bool checkConnection() {
   if (res)
     return true;
   else {
-    Serial.println("Sensor disconnected");
+    Serial.println(F("Sensor disconnected"));
     return false;
   }
 }
@@ -103,11 +103,11 @@ void getVals() {
   }
 }
 void printInfo() {
-  Serial.print("STS Checker Ver. "), Serial.println(VERSION);
-  Serial.println("Copyright(C) Delloyd R&D (M) Sdn Bhd");
+  Serial.print(F("STS Checker Ver. ")), Serial.println(VERSION);
+  Serial.println(F("Copyright(C) Delloyd R&D (M) Sdn Bhd"));
 }
 void reboot() {
-  Serial.println("Rebooting...");
+  Serial.println(F("Rebooting..."));
   delay(100);
   resMcu();
 }

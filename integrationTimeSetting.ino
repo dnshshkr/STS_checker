@@ -1,12 +1,12 @@
 const float integTimes[] = {2.4, 24.0, 50.0, 60.0, 101.0, 120.0, 154.0, 180.0, 199.0, 240.0, 300.0, 360.0, 401.0, 420.0, 480.0, 499.0, 540.0, 600.0, 614.0};
 const uint8_t integTimesLen = sizeof(integTimes) / sizeof(integTimes[0]);
 void integrationTimeSetting() {
-  Serial.println("[Settings/Integration TIme]");
+  Serial.println(F("[Settings/Integration TIme]"));
   for (uint8_t i = 0; i < integTimesLen; i++)
     Serial.print(i + 1), Serial.print(": "), Serial.println(integTimes[i]);
-  Serial.println("S: Back");
+  Serial.println(F("S: Back"));
 waitCmd_integrationTimeSetting:
-  Serial.print("Selection: ");
+  Serial.print(F("Selection: "));
   while (!Serial.available());
   String choiceStr = Serial.readStringUntil('\n');
   Serial.println(choiceStr);
@@ -20,7 +20,7 @@ waitCmd_integrationTimeSetting:
   }
   setIntegTime(choice - 1);
   float integTime = getIntegTime(choice - 1);
-  Serial.print("Integration time set to "), Serial.println(integTime);
+  Serial.print(F("Integration time set to ")), Serial.println(integTime);
 }
 float getIntegTime(uint8_t index) {
   return integTimes[index];
