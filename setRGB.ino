@@ -9,7 +9,7 @@ begin_setRGB:
     for (uint8_t j = 0; j < chSize; j++)
       valsDict[i][j] = ylwDict[ch][i][j];
   }
-  Serial.print("[Settings/Channel "), Serial.print(ch), Serial.println("]");
+  Serial.print("[Settings/Channel "), Serial.print(ch + 1), Serial.println("]");
   Serial.print("LR: "), Serial.println(valsDict[1][0]);
   Serial.print("HR: "), Serial.println(valsDict[1][1]);
   Serial.print("LG: "), Serial.println(valsDict[1][2]);
